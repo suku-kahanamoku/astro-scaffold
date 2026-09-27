@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Home from "../modules/pages/Home.astro";
+import About from "../modules/pages/About.astro";
+import Login from "../modules/auth/components/Login.astro";
+import Account from "../modules/auth/components/Account.astro";
+import ErrorPage from "../modules/pages/ErrorPage.astro";
+import { dictionary, localeFromPath, resolveRoute, url } from "../i18n";
+import { site } from "../config/site";
+import type { User } from "../modules/auth/types";
+const route = resolveRoute(Astro.url.pathname);
+const locale = route?.locale ?? localeFromPath(Astro.url.pathname);
+const page = route?.page;
+const t = dictionary(locale);
+let error: 404 | 503 | undefined;
+let user: User | null = null;
+if (!route || (!site.modules.auth && (page === "login" || page === "account")))
+  error = 404;
+if (!error && (page === "account" || page === "login")) {
+  Astro.locals.privatePage = true;
+  try {
+    user = await Astro.locals.getUser();
+  } catch {
+    error = 503;
+  }
+  if (!error && page === "account" && !user)
+    return Astro.redirect(url(locale, "login"), 302);
+  if (!error && page === "login" && user)
+    return Astro.redirect(url(locale, "account"), 302);
+}
+if (error) Astro.response.status = error;
+const metadata = error
+  ? {
+      title: error === 404 ? t.errors.notFound : t.errors.unavailable,
+      description:
+        error === 404
+          ? t.errors.notFoundDescription
+          : t.errors.unavailableDescription,
+    }
+  : page === "home"
+    ? t.home
+    : page === "about"
+      ? t.about
+      : page === "account"
+        ? { title: t.auth.account, description: t.auth.accountDescription }
+        : t.auth;
+---
+
+<BaseLayout
+  {locale}
+  page={error ? undefined : page}
+  title={metadata.title}
+  description={metadata.description}
+  noindex={!!error || page === "login" || page === "account"}
+>
+  {error ? (
+    <ErrorPage {locale} status={error} />
+  ) : page === "home" ? (
+    <Home {locale} />
+  ) : page === "about" ? (
+    <About {locale} />
+  ) : page === "account" && user ? (
+    <Account {locale} {user} />
+  ) : (
+    <Login {locale} />
+  )}
+</BaseLayout>

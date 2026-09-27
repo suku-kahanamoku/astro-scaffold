@@ -1,0 +1,81 @@
+---
+import { SEO } from "astro-seo";
+import "../styles/global.css";
+import AdFrame from "../components/layout/AdFrame.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import { dictionary, locales, url, type Locale, type PageId } from "../i18n";
+import { site } from "../config/site";
+interface Props {
+  locale: Locale;
+  page?: PageId;
+  title: string;
+  description: string;
+  noindex?: boolean;
+}
+const { locale, page, title, description, noindex = false } = Astro.props;
+const canonical = new URL(
+  page ? url(locale, page) : Astro.url.pathname,
+  Astro.site,
+);
+---
+
+<!doctype html>
+<html lang={locale} data-theme={site.theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f7f3" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <SEO
+      title={`${title} | ${site.name}`}
+      {description}
+      canonical={canonical.href}
+      {noindex}
+      nofollow={noindex}
+      openGraph={{
+        basic: {
+          title,
+          type: "website",
+          image: new URL("/social.png", Astro.site).href,
+          url: canonical.href,
+        },
+        optional: {
+          description,
+          siteName: site.name,
+          locale: { cs: "cs_CZ", en: "en_GB", de: "de_DE" }[locale],
+        },
+      }}
+      twitter={{ card: "summary_large_image" }}
+    />
+    {!noindex && page && (
+      <>
+        {locales.map((code) => (
+          <link
+            rel="alternate"
+            hreflang={code}
+            href={new URL(url(code, page), Astro.site)}
+          />
+        ))}
+        <link
+          rel="alternate"
+          hreflang="x-default"
+          href={new URL(url("cs", page), Astro.site)}
+        />
+      </>
+    )}
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">
+      {dictionary(locale).common.skip}
+    </a>
+    <AdFrame {locale}>
+      <Header {locale} {page} />
+      <main id="main-content" tabindex="-1">
+        <slot />
+      </main>
+      <Footer {locale} />
+    </AdFrame>
+  </body>
+</html>

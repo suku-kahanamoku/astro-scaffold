@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ErrorPage from "../modules/pages/ErrorPage.astro";
+import { dictionary, localeFromPath } from "../i18n";
+const locale = localeFromPath(Astro.url.pathname);
+const t = dictionary(locale);
+Astro.response.status = 404;
+---
+
+<BaseLayout
+  {locale}
+  title={t.errors.notFound}
+  description={t.errors.notFoundDescription}
+  noindex
+>
+  <ErrorPage {locale} status={404} />
+</BaseLayout>

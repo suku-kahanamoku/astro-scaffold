@@ -1,0 +1,24 @@
+---
+import AdSlot from "../../modules/ads/AdSlot.astro";
+import { site } from "../../config/site";
+import type { Locale } from "../../i18n";
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<div class:list={["site-frame", { "with-ads": site.modules.ads }]}>
+  {site.modules.ads && <AdSlot position="top" {locale} />}
+  {site.modules.ads && <AdSlot position="left" {locale} />}
+  <div class="site-content">
+    <slot />
+  </div>
+  {site.modules.ads && <AdSlot position="right" {locale} />}
+  {site.modules.ads && <AdSlot position="bottom" {locale} />}
+</div>
+<script>
+  import { mountAds } from "../../modules/ads/client";
+  const cleanup = mountAds();
+  window.addEventListener("pagehide", cleanup, { once: true });
+</script>
