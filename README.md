@@ -166,9 +166,9 @@ Odkazy ke konvencím: [Astro Node adapter](https://docs.astro.build/en/guides/in
 
 Přepínač jazyků v `modules/LangModule/components/LanguagePicker.astro` přebírá vlajky, kulatý obal aktuálního jazyka a rozbalovací nabídku z astro-prasentace. Zachovává aktuální stránku při změně jazyka; nabídka funguje i bez JavaScriptu, se skriptem se navíc zavírá kliknutím mimo a klávesou Escape s návratem focusu.
 
-Hamburger menu přebírá z astro-prasentace dvě animované čárky měnící se na křížek, styl rozbalovacího panelu, Escape, kliknutí mimo a zavření po odjetí myši (180 ms). Zobrazuje se pod md (768 px), aby odpovídalo breakpointům scaffoldu. Bez JavaScriptu jsou mobilní odkazy rozbalené. `modules/SiteModule/components/BrandStrip.astro` je sloganový pruh značky (brand strip / statement banner), vložený mezi hero a obsah; přebírá typografii a barvy reference, ale používá vlastní slogan scaffoldu v CS/EN/DE. Uprostřed je stejná značka jako v menu díky společné komponentě `modules/SiteModule/components/BrandMark.astro`. Texty pro nový projekt změňte v `brandStrip` ve slovnících. Pozadí pruhu zůstává přes celý viewport pod bočními reklamami.
+Hamburger menu přebírá z astro-prasentace dvě animované čárky měnící se na křížek, styl rozbalovacího panelu, Escape, kliknutí mimo a zavření po odjetí myši (180 ms). Zobrazuje se pod xl (1280 px), stejně jako ve všech projektech používajících MainMenu. Bez JavaScriptu jsou mobilní odkazy rozbalené. `modules/SiteModule/components/BrandStrip.astro` je sloganový pruh značky (brand strip / statement banner), vložený mezi hero a obsah; přebírá typografii a barvy reference, ale používá vlastní slogan scaffoldu v CS/EN/DE. Uprostřed je stejná značka jako v menu díky společné komponentě `modules/SiteModule/components/BrandMark.astro`. Texty pro nový projekt změňte v `brandStrip` ve slovnících. Pozadí pruhu zůstává přes celý viewport pod bočními reklamami.
 
-Hlavní hlavička sahá přes celý viewport, její `.header-inner` drží obsah v responzivním sloupci. Je sticky (`top: 0`) s průsvitným pozadím `rgb(250 247 239 / 88%)`, rozostřením 8 px a stínem podle astro-prasentace. Zůstává nad hlavním obsahem při scrollování.
+Hlavní hlavička sahá přes celý viewport, její `.header-inner` drží obsah v responzivním sloupci. Je sticky (`top: 0`) s průsvitným pozadím `rgb(250 247 239 / 88%)`, rozostřením 8 px a barevností podle značky projektu. Zůstává nad hlavním obsahem při scrollování.
 
 Scaffold obsahuje světlé daisyUI téma `scaffold` a tmavé `scaffold-dark`. Společné barvy a chování přepínače vlastní UIModule, styly ostatních modulů jejich barevné proměnné používají.
 
@@ -182,3 +182,24 @@ Výšku hlavičky měří `modules/UIModule/hooks/useHeaderOffset.ts` přes `Res
 - Každý modul vlastní styly svých komponent. Sdílené proměnné `--theme-*` a případné daisyUI tokeny dodává UIModule; modul si může přidat vlastní proměnné a tmavé varianty pod `[data-theme-mode="dark"]`. Původní světlé barvy zůstávají ve fallback hodnotách. Nepoužívejte plošné invertování obrázků ani barev.
 - Automatický režim se obnoví smazáním projektového klíče z `localStorage`; přepínač v menu nabízí ruční světlou/tmavou volbu.
 - `tests/browser/theme.spec.ts` ověřuje systémovou i uloženou volbu, synchronizaci záložek, zakázané úložiště, klávesnici, jazyky, responzivitu a podobu tlačítka. Backendové scénáře browser testů používají mock, nikoli produkční služby.
+
+## Společné hlavní menu
+
+Rozložení hlavičky vlastní `src/modules/UIModule/components/MainMenu.astro`, styly `UIModule/styles/main-menu.css` a chování `useMainMenu`, `useNavigation` a `useHeaderOffset`. Tato komponenta a její rozložení jsou shodné v projektech astro-scaffold, astro-etymolog, astro-prasentace a astro-sorry-jako. Repozitáře zůstávají samostatné a neimportují soubory sousedních projektů.
+
+`SiteModule/components/Header.astro` je pouze projektová kompozice:
+
+- `items` definuje hlavní odkazy (`href`, `label`, volitelně `current`); `mobileItems` navíc obsahuje přihlášení nebo hlavní akci.
+- Slot `brand` obsahuje logo, slot `language` jazykový přepínač a slot `action` přihlášení nebo výrazné CTA. `locale` předává jazyk přepínači tématu z UIModule, `label` pojmenovává navigaci. Volitelné `openLabel`/`closeLabel` pojmenovávají hamburger.
+- Desktop od 1280 px používá tři sloupce: logo vlevo, navigace přesně uprostřed, akce vpravo v pořadí téma → jazyk → hlavní akce. Mezi tématem a jazykem je 8 px.
+- Pod 1280 px přechází navigace do hamburgeru. Pod 768 px se hlavní akce přesune do mobilních odkazů. Funguje Escape, kliknutí mimo, zavření po výběru odkazu, změna šířky i navigace bez JavaScriptu.
+- `framed` zapojuje hlavičku do existujícího subgridu stránky (Scaffold/Etymolog); nezapíná reklamy. `showAction={false}` skryje volitelnou akci i její prostor.
+- Projektové barvy se upravují pomocí `--menu-background`, `--menu-panel`, `--menu-link`, `--menu-accent` a `--menu-border` ve stylech SiteModule. Logo si zachovává vlastní brand styly. Rozložení se v SiteModule znovu nedefinuje.
+
+Při založení dalšího projektu použijte Scaffold jako šablonu a zachovejte MainMenu i jeho UI závislosti. Měňte pouze značku, data odkazů, překlady a slot hlavní akce v projektové hlavičce. Při změně společného rozložení přeneste stejné soubory UIModule do ostatních samostatných projektů. `tests/browser/main-menu.spec.ts` hlídá centrování, pořadí, rozestupy, překryvy a přechod mezi desktopem a hamburgerem.
+
+## Lokalizované URL
+
+URL slugy jsou v `src/config/locales/{cs,en,de}.json`; stabilní ID a tvorbu odkazů spravuje `src/config/routes.ts`. Nové odkazy skládejte helpery, nikoli ručně. Překlady textů zůstávají v jednotlivých modulech.
+
+Například `about` má adresy `/o-nas/`, `/en/about/` a `/de/ueber-uns/`. Menu, přepínač jazyků, canonical, hreflang a sitemap používají stejný `url()`. Staré nepřeložené cesty se pro GET/HEAD přesměrují stavem 308 se zachováním query; API cesty se nepřekládají. Robots vylučuje nové i původní soukromé adresy.

@@ -95,7 +95,7 @@ test("localized SEO, navigation, mobile menu and not-found status", async ({
   await expect(picker).not.toHaveAttribute("open");
   await picker.locator("summary").click();
   await picker.getByRole("link", { name: "Deutsch", exact: true }).click();
-  await expect(page).toHaveURL(/\/de\/about\/$/);
+  await expect(page).toHaveURL(/\/de\/ueber-uns\/$/);
   await expect(picker.locator(".language-current img")).toHaveAttribute(
     "src",
     (await picker.locator('[lang="de"] img').getAttribute("src"))!,
@@ -174,7 +174,7 @@ test("footer reaches viewport bottom on short pages and follows long content", a
 }) => {
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 1200 });
-    for (const path of ["/about/", "/login/", "/missing/"]) {
+    for (const path of ["/o-nas/", "/prihlaseni/", "/missing/"]) {
       await page.goto(path);
       const footer = await page.locator(".site-footer").boundingBox();
       expect(footer!.y + footer!.height).toBeCloseTo(1200, 0);
@@ -236,7 +236,7 @@ test("translucent main menu sticks while scrolling and remains usable", async ({
         .locator(".mobile-nav")
         .getByRole("link", { name: "O projektu", exact: true })
         .click();
-      await expect(page).toHaveURL(/\/about\/$/);
+      await expect(page).toHaveURL(/\/o-nas\/$/);
     }
   }
 });
@@ -314,7 +314,7 @@ test("module navigation and language picker remain usable without JavaScript", a
       .locator(".mobile-nav")
       .getByRole("link", { name: "O projektu", exact: true })
       .click();
-    await expect(page).toHaveURL(/\/about\/$/);
+    await expect(page).toHaveURL(/\/o-nas\/$/);
     await page.locator(".language-picker summary").click();
     await page
       .locator(".language-picker")
