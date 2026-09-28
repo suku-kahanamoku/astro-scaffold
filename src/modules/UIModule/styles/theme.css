@@ -34,3 +34,64 @@
   --depth: 0;
   --noise: 0;
 }
+
+[data-theme-mode="dark"] {
+  color-scheme: dark;
+  --theme-ink: #eeeef2;
+  --theme-muted: #b9bfce;
+  --theme-accent: #adc0ff;
+  --theme-surface: #232c3b;
+  --theme-surface-soft: #1b2432;
+  --theme-line: #455065;
+  --theme-success: #a9dab7;
+  --theme-success-surface: #223e32;
+  --theme-error: #ffb3a8;
+  --theme-error-surface: #452c30;
+  --theme-warm: #e6c6a1;
+  --theme-warm-surface: #3c342a;
+  --theme-lilac: #d1bff3;
+  --theme-lilac-surface: #332d46;
+  --theme-cool-surface: #29374d;
+}
+
+@plugin "daisyui/theme" {
+  name: "scaffold-dark";
+  color-scheme: dark;
+  --color-base-100: #18221c;
+  --color-base-200: #223027;
+  --color-base-300: #405247;
+  --color-base-content: #e6eee6;
+  --color-primary: #b7d9aa;
+  --color-primary-content: #18221c;
+  --color-secondary: #3e5240;
+  --color-secondary-content: #e6eee6;
+  --color-accent: #efa88d;
+  --color-accent-content: #231c18;
+  --color-neutral: #d6e2d2;
+  --color-neutral-content: #18221c;
+  --color-info: #253f52;
+  --color-info-content: #c0dff5;
+  --color-success: #293e2b;
+  --color-success-content: #c8e6b7;
+  --color-warning: #4c3d21;
+  --color-warning-content: #f3dfa5;
+  --color-error: #4a2d29;
+  --color-error-content: #ffc8ba;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+[data-theme-mode="dark"] {
+  --theme-ink: var(--color-base-content);
+  --theme-accent: var(--color-primary);
+  --theme-muted: #bcc9b7;
+  --theme-surface: #223027;
+  --theme-surface-soft: #18221c;
+  --theme-line: var(--color-base-300);
+  --theme-warm-surface: #30372a;
+}

@@ -65,7 +65,7 @@ Závislosti směřují ke společným modulům:
 | SiteModule, ContentModule, AdsModule | UIModule, LangModule                 |
 | AuthModule                           | CoreModule, UIModule, LangModule     |
 
-Doménové moduly čtou pouze potřebnou projektovou konfiguraci `config/site`, `config/routes` nebo `config/ads`; neimportují `pages`, layout ani serverovou kompozici providerů. Konfigurace značky používá výchozí theme z UIModule a routy typy jazyků z LangModule. UIModule nezná jazyky, autentizaci ani reklamy; texty a odkazy v menu dostává přes props. LangModule nezná konkrétní stránky ani slovníky jiných modulů; přepínač dostává tvorbu URL přes prop `href`. RealtimeModule dostává URL a zapnutí přes parametry hooku. Mezi funkčními moduly nejsou vzájemné importy ani cykly.
+Doménové moduly čtou pouze potřebnou projektovou konfiguraci `config/site`, `config/routes` nebo `config/ads`; neimportují `pages`, layout ani serverovou kompozici providerů. Konfigurace značky používá výchozí theme z UIModule a routy typy jazyků z LangModule. UIModule neimportuje LangModule, autentizaci ani reklamy; texty a odkazy v menu dostává přes props a vlastní překlady přepínače tématu v `locales`. LangModule nezná konkrétní stránky ani slovníky jiných modulů; přepínač dostává tvorbu URL přes prop `href`. RealtimeModule dostává URL a zapnutí přes parametry hooku. Mezi funkčními moduly nejsou vzájemné importy ani cykly.
 
 Překlady patří do `modules/<Name>Module/locales/{cs,en,de}.json`. Každý modul má vlastní `providers/translations.ts` s typovaným `createDictionary()` z LangModule. Při přidání jazyka upravte `LangModule/config.ts`, jeho vlajku v `assets/flags` a slovníky všech modulů. `npm run check` automaticky kontroluje shodnou strukturu a neprázdné překlady každého modulu. Globální agregátor slovníků se nepoužívá, takže například AuthModule nenačítá obsah homepage.
 
@@ -170,6 +170,15 @@ Hamburger menu přebírá z astro-prasentace dvě animované čárky měnící s
 
 Hlavní hlavička sahá přes celý viewport, její `.header-inner` drží obsah v responzivním sloupci. Je sticky (`top: 0`) s průsvitným pozadím `rgb(250 247 239 / 88%)`, rozostřením 8 px a stínem podle astro-prasentace. Zůstává nad hlavním obsahem při scrollování.
 
-Scaffold zatím obsahuje pouze vlastní světlé daisyUI téma `scaffold` (`src/config/site.ts`, `data-theme` na `<html>` a definice barev v `UIModule/styles/theme.css`). Přepínání light/dark/system ani ukládání uživatelské preference nejsou implementované.
+Scaffold obsahuje světlé daisyUI téma `scaffold` a tmavé `scaffold-dark`. Společné barvy a chování přepínače vlastní UIModule, styly ostatních modulů jejich barevné proměnné používají.
 
 Výšku hlavičky měří `modules/UIModule/hooks/useHeaderOffset.ts` přes `ResizeObserver` včetně změn breakpointu či zalomení. Společné CSS proměnné `--site-header-height` a `--sticky-top` řídí horní odstup bočních reklam i `scroll-padding-top` pro nativní kotvy a odkaz „Přejít k obsahu“. Další sticky prvky obsahu používají třídu `sticky-below-header` nebo `top: var(--sticky-top)`; jen hlavní menu má `top: 0`. Reklamy jsou nad pozadími sekcí, hlavička je nad reklamami.
+
+## Světlé a tmavé téma
+
+- `UIModule/config/theme.ts` definuje názvy obou témat, barvu prohlížeče a vlastní klíč úložiště projektu.
+- `UIModule/components/ThemeInit.astro` nastavuje téma v hlavičce před vykreslením obsahu. `ThemeToggle.astro` je přístupné tlačítko se sluncem/měsícem bez rámečku, pozadí nebo stínu; při ovládání klávesnicí má viditelný focus.
+- `UIModule/hooks/useTheme.ts` ukládá ruční volbu a synchronizuje záložky. Bez platné uložené volby sleduje `prefers-color-scheme` včetně změn za běhu. Chyba úložiště přepnutí nezablokuje; bez JavaScriptu zůstává výchozí světlá stránka a tlačítko je skryté.
+- Každý modul vlastní styly svých komponent. Sdílené proměnné `--theme-*` a případné daisyUI tokeny dodává UIModule; modul si může přidat vlastní proměnné a tmavé varianty pod `[data-theme-mode="dark"]`. Původní světlé barvy zůstávají ve fallback hodnotách. Nepoužívejte plošné invertování obrázků ani barev.
+- Automatický režim se obnoví smazáním projektového klíče z `localStorage`; přepínač v menu nabízí ruční světlou/tmavou volbu.
+- `tests/browser/theme.spec.ts` ověřuje systémovou i uloženou volbu, synchronizaci záložek, zakázané úložiště, klávesnici, jazyky, responzivitu a podobu tlačítka. Backendové scénáře browser testů používají mock, nikoli produkční služby.

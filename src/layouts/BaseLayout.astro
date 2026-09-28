@@ -1,4 +1,5 @@
 ---
+import ThemeInit from "../modules/UIModule/components/ThemeInit.astro";
 import SeoHead from "../modules/SiteModule/components/SeoHead.astro";
 import "../styles/global.css";
 import AdFrame from "../modules/AdsModule/components/AdFrame.astro";
@@ -27,6 +28,7 @@ const { locale, page, title, description, noindex = false } = Astro.props;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <SeoHead {locale} {page} {title} {description} {noindex} />
     <slot name="head" />
+    <ThemeInit />
   </head>
   <body>
     <a href="#main-content" class="skip-link">

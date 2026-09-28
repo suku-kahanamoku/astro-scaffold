@@ -1,2 +1,13 @@
-/** Built-in theme. Add an explicit theme definition before offering another choice. */
-export const defaultTheme = { name: "scaffold", color: "#f8f7f3" } as const;
+export const themeConfig = {
+  storageKey: "scaffold-theme",
+  light: {
+    name: "scaffold",
+    color: "#f8f7f3",
+  },
+  dark: {
+    name: "scaffold-dark",
+    color: "#18221c",
+  },
+} as const;
+
+export const defaultTheme = themeConfig.light;

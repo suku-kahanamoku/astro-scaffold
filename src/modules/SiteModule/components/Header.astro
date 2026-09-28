@@ -1,4 +1,5 @@
 ---
+import ThemeToggle from "../../UIModule/components/ThemeToggle.astro";
 import "../styles/components.css";
 import MobileMenu from "../../UIModule/components/MobileMenu.astro";
 import NavigationLinks from "../../UIModule/components/NavigationLinks.astro";
@@ -42,6 +43,7 @@ const mobileLinks: NavigationItem[] = site.modules.auth
       <NavigationLinks items={links} class="nav-link" />
     </nav>
     <div class="header-actions">
+      <ThemeToggle {locale} />
       <LanguagePicker {locale} href={(code) => url(code, page)} />
       {site.modules.auth && (
         <a
