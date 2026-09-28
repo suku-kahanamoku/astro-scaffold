@@ -1,4 +1,4 @@
-export type AdPosition = "top" | "left" | "right" | "bottom";
+export type AdPosition = "top" | "left" | "right";
 export type AdUnit =
   | { provider: "placeholder" }
   | { provider: "google"; client: string; slot: string }
@@ -9,5 +9,4 @@ export const ads: Record<AdPosition, AdUnit> = {
   top: { provider: "placeholder" },
   left: { provider: "placeholder" },
   right: { provider: "placeholder" },
-  bottom: { provider: "placeholder" },
 };

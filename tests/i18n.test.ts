@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { locales, pages, url, resolveRoute, localeFromPath } from "../src/i18n";
+import {
+  locales,
+  localeFromPath,
+} from "../src/modules/LangModule/providers/locale";
+import { pages, url, resolveRoute } from "../src/config/routes";
 test("all locale/page combinations round-trip through shared routes", () => {
   for (const locale of locales)
     for (const page of pages)

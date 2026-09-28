@@ -4,6 +4,6 @@ declare namespace App {
     requestId: string;
     privatePage?: boolean;
     providers: import("./server/providers").Providers;
-    getUser: () => Promise<import("./modules/auth/types").User | null>;
+    getUser: () => Promise<import("./modules/AuthModule/types").User | null>;
   }
 }

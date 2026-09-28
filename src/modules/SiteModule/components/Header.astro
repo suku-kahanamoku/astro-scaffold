@@ -1,0 +1,73 @@
+---
+import "../styles/components.css";
+import MobileMenu from "../../UIModule/components/MobileMenu.astro";
+import NavigationLinks from "../../UIModule/components/NavigationLinks.astro";
+import type { NavigationItem } from "../../UIModule/types";
+import BrandMark from "./BrandMark.astro";
+import LanguagePicker from "../../LangModule/components/LanguagePicker.astro";
+import { site } from "../../../config/site";
+import { dictionary } from "../providers/translations";
+import { type Locale } from "../../LangModule/providers/locale";
+import { url, type PageId } from "../../../config/routes";
+interface Props {
+  locale: Locale;
+  page?: PageId;
+}
+const { locale, page = "home" } = Astro.props;
+const t = dictionary(locale);
+const links: NavigationItem[] = [
+  { href: url(locale), label: t.nav.home, current: page === "home" },
+  { href: url(locale, "about"), label: t.nav.about, current: page === "about" },
+];
+const mobileLinks: NavigationItem[] = site.modules.auth
+  ? [
+      ...links,
+      {
+        href: url(locale, "account"),
+        label: t.nav.account,
+        current: page === "account",
+      },
+    ]
+  : links;
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href={url(locale)} aria-label={site.name}>
+      <BrandMark />
+      {site.name}
+      <span class="brand-dot">®</span>
+    </a>
+    <nav class="desktop-nav" aria-label={t.nav.menu}>
+      <NavigationLinks items={links} class="nav-link" />
+    </nav>
+    <div class="header-actions">
+      <LanguagePicker {locale} href={(code) => url(code, page)} />
+      {site.modules.auth && (
+        <a
+          class="btn btn-sm btn-outline login-link"
+          href={url(locale, "account")}
+        >
+          {t.nav.account}
+          <span aria-hidden="true">↗</span>
+        </a>
+      )}
+    </div>
+    <MobileMenu id="mobile-navigation" label={t.nav.menu} items={mobileLinks} />
+  </div>
+</header>
+<script>
+  import { useHeaderOffset } from "../../UIModule/hooks/useHeaderOffset";
+  import { onDocumentDispose } from "../../UIModule/hooks/onDocumentDispose";
+  const header = document.querySelector<HTMLElement>(".site-header");
+  if (header) onDocumentDispose(useHeaderOffset(header));
+</script>
+<noscript>
+  <style is:global>
+    @media (max-width: 767px) {
+      .header-inner {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</noscript>

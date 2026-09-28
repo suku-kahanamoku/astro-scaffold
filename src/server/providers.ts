@@ -3,8 +3,8 @@ import {
   PHP_CORE_API_KEY,
   PHP_CORE_TENANT_HOST,
 } from "astro:env/server";
-import { createCoreClient } from "./http/php-core";
-import { createAuthProvider } from "../modules/auth/server/provider";
+import { createCoreClient } from "../modules/CoreModule/server/php-core";
+import { createAuthProvider } from "../modules/AuthModule/server/provider";
 
 export function createProviders() {
   const core = createCoreClient({

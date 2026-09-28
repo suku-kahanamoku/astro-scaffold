@@ -1,9 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createCoreClient } from "../src/server/http/php-core";
-import { HttpError, errorResponse } from "../src/server/http/errors";
-import { createAuthProvider } from "../src/modules/auth/server/provider";
-import { assertSameOrigin, readFields } from "../src/server/http/request";
+import { createCoreClient } from "../src/modules/CoreModule/server/php-core";
+import {
+  HttpError,
+  errorResponse,
+} from "../src/modules/CoreModule/server/errors";
+import { createAuthProvider } from "../src/modules/AuthModule/server/provider";
+import {
+  assertSameOrigin,
+  readFields,
+} from "../src/modules/CoreModule/server/request";
 
 const config = {
   baseUrl: "https://core.example.test/api",

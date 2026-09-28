@@ -1,0 +1,24 @@
+{
+  "nav": {
+    "home": "Domů",
+    "about": "O projektu",
+    "login": "Přihlášení",
+    "account": "Můj účet",
+    "menu": "Menu"
+  },
+  "common": {
+    "skip": "Přejít k obsahu",
+    "back": "Zpět na úvod",
+    "footer": "Prostor pro vaše nápady."
+  },
+  "errors": {
+    "notFound": "Tahle stránka tu není.",
+    "notFoundDescription": "Možná se přestěhovala. Zkuste začít z úvodní stránky.",
+    "unavailable": "Služba je dočasně nedostupná.",
+    "unavailableDescription": "Zkuste to prosím za chvíli znovu."
+  },
+  "brandStrip": {
+    "formula": "Dobrý základ. Pro každý další nápad.",
+    "promise": "Váš obsah. Váš styl. Váš prostor."
+  }
+}

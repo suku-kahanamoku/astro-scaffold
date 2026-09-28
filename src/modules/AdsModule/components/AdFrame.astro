@@ -1,0 +1,28 @@
+---
+import "../styles/components.css";
+import AdSlot from "./AdSlot.astro";
+import { site } from "../../../config/site";
+import type { Locale } from "../../LangModule/config";
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<div class:list={["site-frame", { "with-ads": site.modules.ads }]}>
+  {site.modules.ads && (
+    <div class="top-ad-reveal" data-top-ad-reveal>
+      <AdSlot position="top" {locale} />
+    </div>
+  )}
+  {site.modules.ads && <AdSlot position="left" {locale} />}
+  <div class="site-content">
+    <slot />
+  </div>
+  {site.modules.ads && <AdSlot position="right" {locale} />}
+</div>
+<script>
+  import { useAds } from "../hooks/useAds";
+  import { onDocumentDispose } from "../../UIModule/hooks/onDocumentDispose";
+  onDocumentDispose(useAds());
+</script>

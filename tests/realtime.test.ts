@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRealtimeClient } from "../src/modules/realtime/client";
+import { createRealtimeClient } from "../src/modules/RealtimeModule/providers/client";
 
 class FakeSocket {
   static OPEN = 1;
