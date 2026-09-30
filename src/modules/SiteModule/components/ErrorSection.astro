@@ -4,8 +4,15 @@ import Section from "../../UIModule/components/Section.astro";
 import { dictionary } from "../providers/translations";
 import { type Locale } from "../../LangModule/providers/locale";
 import { url } from "../../../config/routes";
+
+/**
+ * Chybová sekce pro stavy 404 a 503 s nadpisem, popisem
+ * a tlačítkem zpět na úvod.
+ */
 interface Props {
+  /** Jazyk textů chybové obrazovky. */
   locale: Locale;
+  /** Stav, který se zobrazí; 404 pro nenalezenou cestu, 503 pro nedostupný backend. */
   status: 404 | 503;
 }
 const { locale, status } = Astro.props;

@@ -3,7 +3,14 @@ import "../styles/components.css";
 import AdSlot from "./AdSlot.astro";
 import { site } from "../../../config/site";
 import type { Locale } from "../../LangModule/config";
+
+/**
+ * Rám okna stránky, který obklopuje obsah reklamními sloty.
+ * Sloty se vykreslí pouze, když je v `src/config/site.ts` zapnutý
+ * modul `ads`; jinak zůstane `.site-content` bez okrajových rezerv.
+ */
 interface Props {
+  /** Jazyk textů popisků reklamních slotů. */
   locale: Locale;
 }
 const { locale } = Astro.props;
@@ -22,6 +29,8 @@ const { locale } = Astro.props;
   {site.modules.ads && <AdSlot position="right" {locale} />}
 </div>
 <script>
+  // Sledování slotů a posun horního banneru se váže na zánik dokumentu,
+  // aby se po view transition nezdvojil.
   import { useAds } from "../hooks/useAds";
   import { onDocumentDispose } from "../../UIModule/hooks/onDocumentDispose";
   onDocumentDispose(useAds());

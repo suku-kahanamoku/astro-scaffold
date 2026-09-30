@@ -4,7 +4,13 @@ import Section from "../../UIModule/components/Section.astro";
 import FeatureCard from "./FeatureCard.astro";
 import { dictionary } from "../providers/translations";
 import type { Locale } from "../../LangModule/config";
+
+/**
+ * Sekce s mřížkou karet, jejichž obsah pochází ze slovníku.
+ * Pořadí položek `cards` určuje i číslování karet.
+ */
 interface Props {
+  /** Jazyk nadpisu, úvodu a obsahu karet. */
   locale: Locale;
 }
 const t = dictionary(Astro.props.locale);

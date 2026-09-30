@@ -1,5 +1,15 @@
 import type { APIRoute } from "astro";
 import { locales, pages, publicPages, url } from "../config/routes";
+
+/**
+ * `GET /robots.txt` – vektor pro vyhledávače.
+ *
+ * Blokuje celé `/api/` a všechny nesoukromé routy (`login`, `account`)
+ * včetně jejich staršího nonlocalizovaného tvaru, aby se neindexovaly
+ * dvakrát. Odkazuje na sitemapu z `@astrojs/sitemap`.
+ *
+ * Odpověď: `text/plain` s `User-agent`, `Allow`, `Disallow` a `Sitemap`.
+ */
 export const GET: APIRoute = ({ site }) => {
   const privatePages = pages.filter((page) => !publicPages.includes(page));
   const paths = new Set(

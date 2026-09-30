@@ -4,12 +4,22 @@ import Section from "../../UIModule/components/Section.astro";
 import { dictionary } from "../providers/translations";
 import { type Locale } from "../../LangModule/providers/locale";
 import type { User } from "../types";
+
+/**
+ * Soukromá stránka profilu s veřejnými údaji přihlášeného uživatele
+ * a formulářem pro odhlášení, který se bez JavaScriptu odešle
+ * na `POST /api/auth/logout/`.
+ */
 interface Props {
+  /** Jazyk textů stránky a návratové adresy po odhlášení. */
   locale: Locale;
+  /** Veřejné údaje uživatele, které sem předalo `locals.getUser()`. */
   user: User;
 }
 const { locale, user } = Astro.props;
 const t = dictionary(locale);
+// Relace se čte jen na serveru, takže `user` je vždy vyplněný a neobsahuje
+// žádné interní údaje; stav odhlášení se předává dotazním parametrem.
 ---
 
 <Section contentClass="auth-section">

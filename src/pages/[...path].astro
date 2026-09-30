@@ -14,6 +14,12 @@ import { localeFromPath } from "../modules/LangModule/providers/locale";
 import { resolveRoute, url } from "../config/routes";
 import { site } from "../config/site";
 import type { User } from "../modules/AuthModule/types";
+
+// Jediná routa, která skládá všechny sekce webu: canonicalizované cesty z
+// `config/routes` se překládají na komponenty, neznalá cesta dostane 404.
+// Routy `login` a `account` jsou soukromé, proto se značí `privatePage`
+// (žádná cache) a vyžadují relaci. Uživatel se načítá jen zde a vždy
+// memoizovaně přes `locals.getUser()`; selhání php-core znamená 503.
 const route = resolveRoute(Astro.url.pathname);
 const locale = route?.locale ?? localeFromPath(Astro.url.pathname);
 const page = route?.page;

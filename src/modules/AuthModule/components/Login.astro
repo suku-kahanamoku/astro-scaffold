@@ -3,11 +3,20 @@ import "../styles/components.css";
 import Section from "../../UIModule/components/Section.astro";
 import { dictionary } from "../providers/translations";
 import { type Locale } from "../../LangModule/providers/locale";
+
+/**
+ * Formulář přihlášení odesílaný bez JavaScriptu přímo na `POST /api/auth/login/`.
+ * Skryté pole `locale` slouží k návratu na lokalizovanou adresu, stav chyby
+ * se předává dotazním parametrem `?error=invalid|unavailable`.
+ */
 interface Props {
+  /** Jazyk textů a jazyk, do kterého se vrací po úspěšném přihlášení. */
   locale: Locale;
 }
 const { locale } = Astro.props;
 const t = dictionary(locale);
+// Server přesměrováním předá důvod neúspěchu v dotazním parametru;
+// cokoliv jiného než `invalid` se zobrazí jako nedostupnost služby.
 const error = Astro.url.searchParams.get("error");
 ---
 

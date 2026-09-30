@@ -3,8 +3,17 @@ import "../styles/components.css";
 import { ads, type AdPosition } from "../../../config/ads";
 import { dictionary } from "../providers/translations";
 import { type Locale } from "../../LangModule/providers/locale";
+
+/**
+ * Rezerva pro jednu reklamní jednotku.
+ * Definice slotu se vkládá do `data-ad-unit` jako JSON a reklamní skript
+ * ji načte až ve chvíli, kdy je slot viditelný a existuje souhlas CMP.
+ * Dokud se reklamu nevykreslí, je viditelný neutrální zástupný text.
+ */
 interface Props {
+  /** Pozice slotu, určuje třídu i klíč v `src/config/ads.ts`. */
   position: AdPosition;
+  /** Jazyk popisku slotu. */
   locale: Locale;
 }
 const { position, locale } = Astro.props;

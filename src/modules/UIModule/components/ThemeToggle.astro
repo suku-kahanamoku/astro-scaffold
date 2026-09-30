@@ -2,10 +2,20 @@
 import cs from "../locales/cs.json";
 import en from "../locales/en.json";
 import de from "../locales/de.json";
+
+/**
+ * Tlačítko pro přepínání světlého a tmavého motivu se dvěma ikonami,
+ * jejichž viditelnost řídí `data-theme-mode` na kořeni dokumentu.
+ *
+ * Do vykreslení je tlačítko skryté (`hidden`) a odhalí ho až `useTheme`,
+ * který tak zajistí, že je funkční vždy a nespočítá se bez JavaScriptu.
+ */
 interface Props {
+  /** Kód jazyka pro text tlačítka; při neznalém kódu se použije čeština. */
   locale: string;
 }
 const dictionaries = { cs, en, de };
+// Neznámý jazyk nesmí shodit vykreslení tlačítka, proto je zálohou čeština.
 const label =
   dictionaries[Astro.props.locale as keyof typeof dictionaries]?.themeToggle ??
   cs.themeToggle;

@@ -1,4 +1,17 @@
 import { HttpError } from "./errors";
+
+/**
+ * Ověří, že zápisový požadavek přišel ze stejného originu jako web.
+ *
+ * Kontroluje hlavičku `Origin` a odmítá i požadavky označené
+ * `Sec-Fetch-Site: cross-site`. Slouží jako obrana proti CSRF u mutací
+ * pod `/api/`, které se volají z prohlížeče.
+ *
+ * @param request Původní `Request`, u něhož se kontrolují hlavičky originu.
+ * @param expectedOrigin Origin, s nímž musí `Origin` souhlasit; u `astro:config` jde o `site`, jinak o origin z URL.
+ * @returns Nic, pokud je požadavek důvěryhodný.
+ * @throws HttpError se stavem 403 a kódem `invalid_origin`, pokud origin neodpovídá.
+ */
 export function assertSameOrigin(request: Request, expectedOrigin: string) {
   if (
     request.headers.get("origin") !== expectedOrigin ||
@@ -6,6 +19,19 @@ export function assertSameOrigin(request: Request, expectedOrigin: string) {
   )
     throw new HttpError(403, "invalid_origin");
 }
+
+/**
+ * Načte a zvaliduje tělo formuláře či JSON požadavku.
+ *
+ * Přijímá pouze `application/json` a `application/x-www-form-urlencoded`,
+ * tělo čte po kouscích a odmítne ho, jakmile překročí 16 KiB. Výsledkem musí
+ * být objekt, nikoli pole ani primitivum.
+ *
+ * @param request Původní `Request` s tělem ke čtení.
+ * @returns Objekt polí požadavku, hodnoty zůstávají `unknown` a validují se v handlerech.
+ * @throws HttpError 415 `unsupported_media_type` pro jiný typ obsahu,
+ *   422 `invalid_input` bez těla či při chybném formátu, 413 `body_too_large` nad limit.
+ */
 export async function readFields(
   request: Request,
 ): Promise<Record<string, unknown>> {

@@ -6,6 +6,18 @@ import { readFields } from "../../CoreModule/server/request";
 import { isLocale, type Locale } from "../../LangModule/providers/locale";
 import { url } from "../../../config/routes";
 
+/**
+ * `POST /api/auth/logout` – ukončení relace.
+ *
+ * Vstup: JSON nebo formulář s volitelným polem `locale` pro návrat na lokalizovanou
+ * adresu. Token se čte pouze z cookie; chyba 401 z php-core se při odhlašování
+ * ignoruje, aby relace zmizela i po vypršení. Cookie se vždy smaže.
+ *
+ * Odpověď: u formuláře přesměrování 303 na přihlášení, u JSON volání
+ * `Response.json({ success: true, data: null })`.
+ * Chyby: 404 při vypnutém modulu auth, 502 při nedostupnosti backendu;
+ * u formuláře přesměrování zpět na profil s `?error=logout`.
+ */
 export const logoutHandler: APIRoute = async (context) => {
   let locale: Locale = "cs";
   const form = context.request.headers

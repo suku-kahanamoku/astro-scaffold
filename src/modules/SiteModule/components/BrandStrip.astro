@@ -4,7 +4,13 @@ import BrandMark from "./BrandMark.astro";
 import Section from "../../UIModule/components/Section.astro";
 import { dictionary } from "../providers/translations";
 import { type Locale } from "../../LangModule/providers/locale";
+
+/**
+ * Úzký pás mezi úvodním a features blokem s formulací studia,
+ * značkou a slibem závěrečné věty.
+ */
 interface Props {
+  /** Jazyk textů pásu značky. */
   locale: Locale;
 }
 const t = dictionary(Astro.props.locale).brandStrip;

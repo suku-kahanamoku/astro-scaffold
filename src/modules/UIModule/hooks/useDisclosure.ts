@@ -1,4 +1,12 @@
-/** Native details stay usable without JavaScript. Returns listener cleanup. */
+/**
+ * Doplní chování `<details>`: zavření klávesou `Escape` s vrácením fokusu
+ * na `summary` a zavření kliknutím mimo otevřenou rozbalovací oblast.
+ * Nativní `<details>` zůstává použitelné i bez JavaScriptu.
+ *
+ * @param selector CSS selektor otevřených prvků `<details>`, např. `.language-picker`.
+ * @param root Kořen, na němž se poslouchají události, defaultně `document`.
+ * @returns Funkce pro odebrání posluchačů.
+ */
 export function useDisclosure(selector: string, root: Document = document) {
   const controller = new AbortController();
   const options = { signal: controller.signal };

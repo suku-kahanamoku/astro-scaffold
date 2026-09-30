@@ -8,12 +8,22 @@ import { site } from "../../../config/site";
 import { dictionary } from "../providers/translations";
 import { type Locale } from "../../LangModule/providers/locale";
 import { url, type PageId } from "../../../config/routes";
+
+/**
+ * Hlavička webu: značka, hlavní navigace, přepínač motivu, přepínač jazyků
+ * a volitelné tlačítko účtu. Odkazy se staví přes `url()`, takže vznikají
+ * vždy kanonické, lokalizované cesty.
+ */
 interface Props {
+  /** Aktivní jazyk, propisuje se přepínači jazyků. */
   locale: Locale;
+  /** Aktuální routa pro zvýraznění položky menu; výchozí je `home`. */
   page?: PageId;
 }
 const { locale, page = "home" } = Astro.props;
 const t = dictionary(locale);
+// Vodorovné menu drží jen veřejné routy, mobilní navíc přihlašovací profil,
+// a to pouze při zapnutém modulu auth.
 const links: NavigationItem[] = [
   { href: url(locale), label: t.nav.home, current: page === "home" },
   { href: url(locale, "about"), label: t.nav.about, current: page === "about" },

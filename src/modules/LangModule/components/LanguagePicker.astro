@@ -5,12 +5,22 @@ import deFlag from "../assets/flags/de.svg?url";
 import { dictionary } from "../providers/translations";
 import { locales, type Locale } from "../providers/locale";
 import DisclosureChevron from "../../UIModule/components/DisclosureChevron.astro";
+
+/**
+ * Přepínač jazyků založený na nativním `<details>`, takže funguje i bez
+ * JavaScriptu. Odkazy si komponenta nedodává sama – URL pro každý jazyk
+ * dodává volající přes prop `href`.
+ */
 interface Props {
+  /** Aktivní jazyk, z něhož se bere vlajka a položka `aria-current`. */
   locale: Locale;
+  /** Tvůrce URL stránky v daném jazyce, např. `(code) => url(code, page)`. */
   href: (locale: Locale) => string;
 }
 const { locale, href } = Astro.props;
 const t = dictionary(locale);
+// Vlajky se mapují ručně, aby se do bundlu nedostaly všechny soubory
+// z adresáře; kód jazyka se pro českou variantu zobrazí jako kód země.
 const flags = { cs: csFlag, en: enFlag, de: deFlag };
 const languageCode = locale === "cs" ? "CZ" : locale.toUpperCase();
 ---
@@ -51,6 +61,8 @@ const languageCode = locale === "cs" ? "CZ" : locale.toUpperCase();
 </details>
 
 <script>
+  // `useDisclosure` doplňuje zavření na Escape a kliknutí mimo;
+  // `onDocumentDispose` zajistí, že se po view transition nezdvojí.
   import { useDisclosure } from "../../UIModule/hooks/useDisclosure";
   import { onDocumentDispose } from "../../UIModule/hooks/onDocumentDispose";
   onDocumentDispose(useDisclosure(".language-picker"));

@@ -1,4 +1,16 @@
-/** Small DOM hook; each menu owns its listeners and hover timer. */
+/** Malý DOM hook; každé menu má vlastní posluchače a časovač pro hover. */
+
+/**
+ * Obsluhuje tlačítko a panel mobilního menu v hlavičce.
+ *
+ * Menu se otevírá kliknutím, zavírá klávesou `Escape`, kliknutím mimo,
+ * vybráním odkazu, při přechodu na šířku alespoň 1280 px a při odchodu
+ * kurzoru myši po krátké prodlevě. Každé menu má vlastní `AbortController`.
+ *
+ * @param toggle Tlačítko s `aria-expanded`, `data-open-label` a `data-close-label`.
+ * @param mobileNav Panel navigace, který se skrývá atributem `hidden`.
+ * @returns Funkce pro odebrání posluchačů a zrušení časovače.
+ */
 export function useNavigation(
   toggle: HTMLButtonElement,
   mobileNav: HTMLElement,
@@ -6,10 +18,12 @@ export function useNavigation(
   const controller = new AbortController();
   const options = { signal: controller.signal };
   let timer: ReturnType<typeof setTimeout> | undefined;
+  /** Zruší čekající odložené zavření po opuštění kurzorem. */
   const cancelLeave = () => {
     clearTimeout(timer);
     timer = undefined;
   };
+  /** Zavře mobilní panel a vrátí `aria-label` tlačítka do výchozího stavu. */
   const close = () => {
     cancelLeave();
     toggle.setAttribute("aria-expanded", "false");
@@ -30,6 +44,7 @@ export function useNavigation(
     },
     options,
   );
+  /** Sleduje ukazatel myši a odloženě zavře menu, když kurzor opustí panel. */
   const pointer = (event: PointerEvent) => {
     if (
       event.pointerType !== "mouse" ||

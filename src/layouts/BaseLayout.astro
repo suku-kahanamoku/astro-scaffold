@@ -9,11 +9,22 @@ import { dictionary } from "../modules/SiteModule/providers/translations";
 import { type Locale } from "../modules/LangModule/providers/locale";
 import { type PageId } from "../config/routes";
 import { site } from "../config/site";
+
+/**
+ * Společný dokument stránky: hlavička `<head>` se SEO a motivem, přeskakovací odkaz
+ * na obsah a rám s hlavičkou webu, obsahem a patičkou.
+ * Reklama se vykreslí podle přepínačů v `src/config/site.ts`.
+ */
 interface Props {
+  /** Jazyk dokumentu, propisuje se do `lang` a volí slovníky. */
   locale: Locale;
+  /** Aktuální routa; určuje kanonickou URL a `hreflang` záznamy. */
   page?: PageId;
+  /** Titulek stránky, v hlavičce doplněný názvem webu. */
   title: string;
+  /** Popisek stránky pro SEO a sociální sítě. */
   description: string;
+  /** `true` nastaví `noindex, nofollow`; používá se pro přihlášení a chyby. */
   noindex?: boolean;
 }
 const { locale, page, title, description, noindex = false } = Astro.props;

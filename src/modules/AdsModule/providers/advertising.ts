@@ -2,9 +2,17 @@ import type { AdUnit } from "../../../config/ads";
 import { consentProvider } from "./consent";
 
 declare global {
+  /** Doplnění globálního objektu o rozhraní, které si volají skripty poskytovatelů. */
   interface Window {
+    /** Queue, kterou si Google's skript vyžádá po vložení `<ins class="adsbygoogle">`. */
     adsbygoogle?: Record<string, never>[];
+    /** Globální objekt poskytovatele Seznam, přes který se volá `getAds()`. */
     sssp?: {
+      /**
+       * Nechá poskytovatele vykreslit reklamu do kontejneru s daným `id`.
+       *
+       * @param config Identifikátor zóny, `id` cílového kontejneru a rozměry slotu v pixelech.
+       */
       getAds: (config: {
         zoneId: number;
         id: string;
@@ -14,7 +22,19 @@ declare global {
     };
   }
 }
+
+/**
+ * Cache už načtených skriptů podle URL; slouží současně jako zámek proti
+ * duplicitnímu vložení stejného `<script>`.
+ */
 const scripts = new Map<string, Promise<void>>();
+
+/**
+ * Načte externí skript poskytovatele právě jednou a asynchronně.
+ *
+ * @param src Absolutní URL skriptu třetí strany.
+ * @returns Promise, která se splní po `onload` a odmítne po `onerror` nebo po 10 s.
+ */
 function loadScript(src: string): Promise<void> {
   const existing = scripts.get(src);
   if (existing) return existing;
@@ -41,6 +61,19 @@ function loadScript(src: string): Promise<void> {
   scripts.set(src, pending);
   return pending;
 }
+
+/**
+ * Vloží reklamní jednotku do cílového kontejneru a vyvolá vykreslení u poskytovatele.
+ *
+ * Před vykreslením se ověřuje souhlas i viditelnost kontejneru, aby se žádné
+ * poskytovatelské ani měřicí kódy nespouštěly bez souhlasu.
+ *
+ * @param target Element s `id`, do kterého se vloží značka reklamy.
+ * @param unit Definice jednotky z `src/config/ads.ts`.
+ * @returns Promise, který se splní po vykreslení, odmítne při neplatné konfiguraci
+ *   nebo nedostupném poskytovateli; při chybějícím souhlasu se tiše vyřeší.
+ * @throws Error při neplatném publisher ID, slot ID či zóně a při chybějícím globálním objektu poskytovatele.
+ */
 async function renderAd(target: HTMLElement, unit: AdUnit) {
   if (unit.provider === "google") {
     if (!/^ca-pub-\d+$/.test(unit.client) || !/^\d+$/.test(unit.slot))
@@ -74,6 +107,17 @@ async function renderAd(target: HTMLElement, unit: AdUnit) {
   }
 }
 
+/**
+ * Sleduje všechny sloty `[data-ad-unit]` v daném stromu a vykreslí reklamu
+ * v okamžiku, kdy se slot dostane do blízkosti viewportu a existuje souhlas.
+ *
+ * Slot se zpracuje jen jednou, `placeholder` se přeskakuje a při chybě
+ * poskytovatele se slot označí `data-ad-state="unavailable"`, takže místo
+ * reklamy zůstane rezerva rozvržení.
+ *
+ * @param root Kořen, ve kterém se hledají sloty, defaultně celý dokument.
+ * @returns Funkce pro odpojení pozorovatele a odhlášení od souhlasu.
+ */
 export function mountAds(root: ParentNode = document) {
   const slots = [...root.querySelectorAll<HTMLElement>("[data-ad-unit]")];
   const requested = new Set<HTMLElement>();

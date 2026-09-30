@@ -1,5 +1,11 @@
 ---
+/**
+ * Šipka pro prvky `<details>`, která se otáčí podle stavu otevření
+ * (rotaci řídí CSS kontext, např. `.language-picker[open]`).
+ * Element je dekorativní, proto je skrytý před čtečkami.
+ */
 interface Props {
+  /** Třída navíc pro lokalizaci stavu, např. `language-chevron`. */
   class?: string;
 }
 const { class: className } = Astro.props;

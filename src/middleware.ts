@@ -3,6 +3,16 @@ import { defineMiddleware, sequence } from "astro:middleware";
 import { requestHook } from "./modules/CoreModule/server/requestHook";
 import { sessionHook } from "./modules/AuthModule/server/sessionHook";
 import { createProviders } from "./server/providers";
+
+/**
+ * Společná řetěz middleware pro každý požadavek. Pořadí je záměrné:
+ *
+ * 1. trvalé přesměrování starších nonlocalizovaných aliasů,
+ * 2. `requestHook` z CoreModule: `requestId`, kontrola originu u mutací
+ *    a bezpečnostní hlavičky odpovědi,
+ * 3. vytvoření serverových providerů pro daný požadavek,
+ * 4. `sessionHook` z AuthModule: odložené načtení uživatele z relace.
+ */
 export const onRequest = sequence(
   defineMiddleware((context, next) => {
     if (context.request.method === "GET" || context.request.method === "HEAD") {

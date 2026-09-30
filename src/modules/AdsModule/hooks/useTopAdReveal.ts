@@ -1,4 +1,11 @@
-/** Move the creative at half the page scroll speed inside its clipped window. */
+/**
+ * Posune reklamní kreativu rychlostí poloviny scrollu uvnitř oříznutého okna.
+ * Okno musí obsahovat atribut `data-top-ad-reveal` a uvnitř banner `.ad-top`;
+ * posun se zapisuje do proměnné `--ad-reveal-offset`.
+ *
+ * @param root Kořen, ve kterém se hledá okno, defaultně celý dokument.
+ * @returns Funkce, která zruší animaci a odstraní nastavenou CSS proměnnou.
+ */
 export function mountTopAdReveal(root: ParentNode = document) {
   const windowElement = root.querySelector<HTMLElement>("[data-top-ad-reveal]");
   const banner = windowElement?.querySelector<HTMLElement>(".ad-top");
@@ -6,6 +13,7 @@ export function mountTopAdReveal(root: ParentNode = document) {
 
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let frame: number | undefined;
+  /** Přepočítá a zapíše posun banneru pro aktuální polohu scrollu. */
   const render = () => {
     frame = undefined;
     const bounds = windowElement.getBoundingClientRect();
@@ -17,6 +25,7 @@ export function mountTopAdReveal(root: ParentNode = document) {
     const offset = reducedMotion.matches ? 0 : distance * 0.5;
     banner.style.setProperty("--ad-reveal-offset", `${offset}px`);
   };
+  /** Zahájí jediný nadcházející snímek, aby se nestřílelo na každou událost. */
   const schedule = () => {
     if (frame === undefined) frame = requestAnimationFrame(render);
   };

@@ -10,6 +10,20 @@ import {
 } from "../../LangModule/providers/locale";
 import { url } from "../../../config/routes";
 
+/**
+ * `POST /api/auth/login` – přihlášení přes php-core.
+ *
+ * Vstup: JSON nebo formulář s poli `email`, `password` a volitelným `locale`.
+ * E-mail se na serveru ořízne a ověří formát i délku; heslo se pouze předá
+ * php-core, které rozhodne o úspěchu. Session token se uloží jen do HttpOnly
+ * cookie, do těla odpovědi se nikdy nevrací.
+ *
+ * Odpověď: u formulářového odeslání přesměrování 303 na profil (nebo zpět na
+ * formulář s `?error=invalid|unavailable`), u JSON volání
+ * `Response.json({ success: true, data: user })`.
+ * Chyby: 404 při vypnutém modulu auth, 422 při neplatném vstupu, 401 od php-core,
+ * 502 při nedostupnosti či vadné odpovědi backendu.
+ */
 export const loginHandler: APIRoute = async (context) => {
   const form = context.request.headers
     .get("content-type")

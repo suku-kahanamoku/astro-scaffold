@@ -3,15 +3,33 @@ import "../styles/main-menu.css";
 import ThemeToggle from "./ThemeToggle.astro";
 import NavigationLinks from "./NavigationLinks.astro";
 import type { NavigationItem } from "../types";
+
+/**
+ * Rám hlavičky webu: značka, vodorovná navigace, předvolby (motiv a jazyk),
+ * volitelná hlavní akce a tlačítko pro mobilní menu.
+ *
+ * Ovládání přebírá `useMainMenu`, který se po každém `astro:page-load`
+ * znovu naváže. Bez JavaScriptu zůstává mobilní panel viditelný díky
+ * stylům v `noscript`.
+ */
 interface Props {
+  /** Jazyk předávaný přepínači motivu. */
   locale: string;
+  /** Popisek navigace, použije se jako `aria-label` a výchozí text tlačítka. */
   label: string;
+  /** Položky vodorovného menu. */
   items: NavigationItem[];
+  /** Položky mobilního menu, výchozí hodnotou je `items`. */
   mobileItems?: NavigationItem[];
+  /** `id` panelu mobilního menu, na který odkazuje `aria-controls`. */
   menuId?: string;
+  /** Text tlačítka ve stavu zavřeno, výchozí hodnotou je `label`. */
   openLabel?: string;
+  /** Text tlačítka ve stavu otevřeno, výchozí hodnotou je `label`. */
   closeLabel?: string;
+  /** `true` přidá třídu `main-menu-framed` pro zapadnutí do rámu s reklamou. */
   framed?: boolean;
+  /** `true` vykreslí slot `action` vedle předvolb. */
   showAction?: boolean;
 }
 const {
@@ -79,7 +97,7 @@ const {
         display: none;
       }
       @layer base {
-        /* Layered !important preflight needs an override in the same layer. */
+        /* Vrstvený preflight s !important je nutné přepsat ve stejné vrstvě. */
         .main-menu .mobile-nav[hidden] {
           display: flex !important;
         }

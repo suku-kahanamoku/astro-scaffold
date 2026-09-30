@@ -7,7 +7,13 @@ import { dictionary } from "../providers/translations";
 import { type Locale } from "../../LangModule/providers/locale";
 import { url } from "../../../config/routes";
 import { site } from "../../../config/site";
+
+/**
+ * Úvodní sekce stránky s nadpisem, popisem, volitelnou akcí na profil
+ * a ilustrací. Odkazy se staví přes `url()` a respektují aktuální jazyk.
+ */
 interface Props {
+  /** Jazyk textů sekce a cílových odkazů. */
   locale: Locale;
 }
 const { locale } = Astro.props;

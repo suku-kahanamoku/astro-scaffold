@@ -1,4 +1,9 @@
 ---
+/**
+ * Motiv se aplikuje ještě před vykreslením stránky, aby se zabránilo blikání
+ * světlého motivu. Skript běží před ostatními skripty a čte pouze konfiguraci
+ * motivu, žádné síťové ani serverové požadavky.
+ */
 import { themeConfig } from "../config/theme";
 ---
 
